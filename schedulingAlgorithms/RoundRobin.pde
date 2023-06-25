@@ -6,51 +6,45 @@ import java.util.Queue;
 // Round Robin Algorithm
 class RoundRobin implements SchedulingAlgorithm {
     private int timeQuantum;
-
+    
     RoundRobin(int timeQuantum) {
         this.timeQuantum = timeQuantum;
     }
-
+    
     @Override
     public void execute(ArrayList<Process> processes) {
-        Queue<Process> queue = new LinkedList<>();
         int currentTime = 0;
-        int completedProcesses = 0;
-
-        while (completedProcesses < processes.size()) {
-            // Add arrived processes to the queue
-            for (Process process : processes) {
-                if (process.arrivalTime <= currentTime && !queue.contains(process))
-                    queue.add(process);
-            }
-
-            // Execute processes in the queue
-            Process currentProcess = queue.poll();
-            if (currentProcess != null) {
-                // Calculate waiting time
-                currentProcess.waitingTime += currentTime - currentProcess.arrivalTime;
-
-                // Execute for time quantum or until completion
-                int remainingTime = currentProcess.burstTime;
-                if (remainingTime > timeQuantum)
-                    remainingTime = timeQuantum;
-
-                currentTime += remainingTime;
-                currentProcess.burstTime -= remainingTime;
-
-                // Check if process is completed
-                if (currentProcess.burstTime == 0) {
-                    // Calculate turnaround time
-                    currentProcess.turnaroundTime = currentProcess.waitingTime + currentTime - currentProcess.arrivalTime;
-                    completedProcesses++;
-                } else {
-                    // Add the process back to the queue
-                    queue.add(currentProcess);
+        
+        //sorting according to arrival times
+        for (int i = 0; i < processes.size(); i++)
+        {
+            for (int  j = 0;  j < processes.size() - 1; j++)
+            {
+                if (processes.get(j).arrivalTime > processes.get(j + 1).arrivalTime)
+                {
+                    swap(processes, j,j + 1);                
                 }
-            } else {
-                // No processes in the queue, increment current time
-                currentTime++;
-            }
+        }
+        }
+        
+        for (Process process : processes) {
+            // Calculate waiting time
+            process.waitingTime = currentTime - process.arrivalTime;
+            if (process.waitingTime < 0)
+                process.waitingTime = 0;
+            
+            // Calculate turnaround time
+            process.turnaroundTime = process.waitingTime + process.burstTime;
+            
+            // Update current time
+            currentTime += process.burstTime;
         }
     }
+    
+    void swap(ArrayList<Process> processes, int index1, int index2)
+    {
+        Process temp = processes.get(index1);
+        processes.set(index1, processes.get(index2));
+        processes.set(index2, temp);
+    }          
 }

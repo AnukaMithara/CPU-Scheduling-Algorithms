@@ -8,36 +8,37 @@ class ShortestRemainingTimeNext implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
         int currentTime = 0;
-        int completedProcesses = 0;
-
-        while (completedProcesses < processes.size()) {
-            // Select the process with the shortest remaining time
-            Process shortestProcess = null;
-            for (Process process : processes) {
-                if (process.arrivalTime <= currentTime && process.burstTime > 0 &&
-                        (shortestProcess == null || process.burstTime < shortestProcess.burstTime)) {
-                    shortestProcess = process;
+        
+        //sorting according to arrival times
+        for (int i = 0; i < processes.size(); i++)
+        {
+            for (int  j = 0;  j < processes.size() - 1; j++)
+            {
+                if (processes.get(j).arrivalTime > processes.get(j + 1).arrivalTime)
+                {
+                    swap(processes, j,j + 1);                
                 }
-            }
-
-            if (shortestProcess != null) {
-                // Calculate waiting time
-                shortestProcess.waitingTime += currentTime - shortestProcess.arrivalTime;
-
-                // Execute the process for one time unit
-                shortestProcess.burstTime--;
-                currentTime++;
-
-                // Check if process is completed
-                if (shortestProcess.burstTime == 0) {
-                    // Calculate turnaround time
-                    shortestProcess.turnaroundTime = shortestProcess.waitingTime + currentTime - shortestProcess.arrivalTime;
-                    completedProcesses++;
-                }
-            } else {
-                // No processes available, increment current time
-                currentTime++;
             }
         }
+        
+        for (Process process : processes) {
+            // Calculate waiting time
+            process.waitingTime = currentTime - process.arrivalTime;
+            if (process.waitingTime < 0)
+                process.waitingTime = 0;
+            
+            // Calculate turnaround time
+            process.turnaroundTime = process.waitingTime + process.burstTime;
+            
+            // Update current time
+            currentTime += process.burstTime;
+        }
     }
+    
+    void swap(ArrayList<Process> processes, int index1, int index2)
+    {
+        Process temp = processes.get(index1);
+        processes.set(index1, processes.get(index2));
+        processes.set(index2, temp);
+    }          
 }
