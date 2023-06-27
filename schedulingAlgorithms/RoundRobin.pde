@@ -14,37 +14,30 @@ class RoundRobin implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
         int currentTime = 0;
+        Queue<Process> processQueue = new LinkedList<>();
+        processQueue.addAll(processes);
+
+        ArrayList<Process> processsn = new ArrayList<Process>();
         
-        //sorting according to arrival times
-        for (int i = 0; i < processes.size(); i++)
-        {
-            for (int  j = 0;  j < processes.size() - 1; j++)
-            {
-                if (processes.get(j).arrivalTime > processes.get(j + 1).arrivalTime)
-                {
-                    swap(processes, j,j + 1);                
-                }
-        }
-        }
-        
-        for (Process process : processes) {
-            // Calculate waiting time
-            process.waitingTime = currentTime - process.arrivalTime;
-            if (process.waitingTime < 0)
-                process.waitingTime = 0;
+        while (!processQueue.isEmpty()) {
+            Process currentProcess = processQueue.poll();
+            currentProcess.startTime = currentTime;
             
-            // Calculate turnaround time
-            process.turnaroundTime = process.waitingTime + process.burstTime;
+            if (currentProcess.burstTime <= timeQuantum) {
+                // Process completed
+                currentTime += currentProcess.burstTime;
+                processsn.add(currentProcess);
+                
+            } else {
+                // Process needs to be scheduled again
+                currentTime += timeQuantum;
+                currentProcess.burstTime=currentProcess.burstTime - timeQuantum;
+                processQueue.add(currentProcess);
+                processsn.add(currentProcess);
+            }
+           
             
-            // Update current time
-            currentTime += process.burstTime;
         }
-    }
-    
-    void swap(ArrayList<Process> processes, int index1, int index2)
-    {
-        Process temp = processes.get(index1);
-        processes.set(index1, processes.get(index2));
-        processes.set(index2, temp);
-    }          
+        processes=processsn;
+}
 }

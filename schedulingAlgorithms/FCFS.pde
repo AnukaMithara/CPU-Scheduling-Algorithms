@@ -7,7 +7,7 @@ import java.util.Queue;
 class FCFS implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
-        int currentTime = 0;
+        
         
         //sorting according to arrival times
         for (int i = 0; i < processes.size(); i++)
@@ -21,11 +21,13 @@ class FCFS implements SchedulingAlgorithm {
             }
         }
         
+        int currentTime = 0;
         for (Process process : processes) {
             // Calculate waiting time
             process.waitingTime = currentTime - process.arrivalTime;
-            if (process.waitingTime < 0)
+            if (process.waitingTime < 0){
                 process.waitingTime = 0;
+            }
             
             // Calculate turnaround time
             process.turnaroundTime = process.waitingTime + process.burstTime;
