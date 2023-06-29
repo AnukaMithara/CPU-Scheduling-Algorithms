@@ -7,20 +7,58 @@ import java.util.Queue;
 class ShortestProcessNext implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
-        int currentTime = 0;
+        int currentTime = startTime;
+        int j=0, k =0,z=0;
+        Process[] newarray = new Process[processes.size()];
         
         //sorting according to arrival times
         for (int i = 0; i < processes.size(); i++)
         {
-            for (int  j = 0;  j < processes.size() - 1; j++)
+            for (int  n = 0;  n < processes.size() - 1; n++)
             {
-                if (processes.get(j).arrivalTime > processes.get(j + 1).arrivalTime)
+                if (processes.get(n).arrivalTime > processes.get(n + 1).arrivalTime)
                 {
-                    swap(processes, j,j + 1);                
+                    swap(processes, n,n + 1);                
                 }
             }
         }
         
+        int i = startTime;
+        
+        
+        while(i< TotalburstTime){
+          
+          for(j=z;j<processes.size();j++){
+            if (processes.get(j).arrivalTime <= i){
+              newarray[k] = processes.get(j);
+              k++;
+            }
+          }
+          
+          Process tempary = newarray[0];
+          for(j=0;j<k-1;j++)
+          {
+            if(newarray[j+1].burstTime< tempary.burstTime)
+            {
+              tempary = newarray[j+1];
+            }
+              
+          }
+          
+          for(j=0;j<processes.size();j++){
+             
+            if(tempary.arrivalTime==processes.get(j).arrivalTime)
+            {
+              swap(processes,j,z);                                    //Methana check karapn
+              z++;                                                    //Ekata wadi una gmn index out of bound yanwa 
+            }                                                         // https://www.guru99.com/priority-scheduling-program.html
+          }                                                          //Me link eke thiyn example ekata check krl blpn
+          
+          k=0;
+
+          i = i +  tempary.burstTime;
+        }
+
         for (Process process : processes) {
             // Calculate waiting time
             process.waitingTime = currentTime - process.arrivalTime;

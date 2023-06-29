@@ -1,10 +1,10 @@
-import javax.swing.*;
+import javax.swing.*; //<>//
 import java.awt.*;
 import java.util.*;
 
 
 // Number of processes
-int numProcesses,timeQuantum,TotalburstTime,totalCurrentBurstTime = 0;
+int numProcesses,timeQuantum,TotalburstTime,startTime,totalCurrentBurstTime = 0;
 int[] arrivalTimes,burstTimes,priorities;  
 int ganttWidthFactor;
 int processNumber1 = 0,processNumber2 = 0,processNumber3 = 0,processNumber4 = 0,processNumber5 = 0;
@@ -129,6 +129,21 @@ void setup() {
                 TotalburstTime = TotalburstTime + burstTimes[i];
             }
             
+            //Set start time
+            startTime = arrivalTimes[0];
+            for (int i = 0; i < numProcesses; i++) {
+                if(startTime > arrivalTimes[i]){
+                  startTime = arrivalTimes[i];
+                }
+            }
+            
+            TotalburstTime += startTime;
+            
+            
+            
+            
+            
+            
             ganttWidthFactor = 1600/TotalburstTime;
         }   
         // Create scheduling algorithms       
@@ -215,7 +230,7 @@ void drawCharts() {
     int initialY = 550;
     int rectHeight = 35;
     int gap = 100;
-    int algo1TotalTime = 0,algo2TotalTime = 0,algo3TotalTime = 0,algo4TotalTime = 0,algo5TotalTime = 0;
+    int algo1TotalTime = startTime,algo2TotalTime = startTime,algo3TotalTime = startTime,algo4TotalTime = startTime,algo5TotalTime = startTime;
     
     int x1 = initialX, x2 = initialX, x3 = initialX, x4 = initialX, x5 = initialX;
     int y1 = initialY, y2 = initialY + gap * 1, y3 = initialY + gap * 2, y4 = initialY + gap * 3, y5 = initialY + gap * 4;
@@ -516,7 +531,7 @@ void drawCharts() {
 }
 
 
-void drawTable() { //<>// //<>// //<>//
+void drawTable() { //<>// //<>//
     //Set table dimensions
     int numRows = numProcesses + 1 +1;                
     int numCols = 4 + 10;
@@ -642,8 +657,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageWaitngTime[0] += (float) processes1.get(row-1).waitingTime / numProcesses;
         
-        // Display cell content         
-        text(processes1.get(row-1).waitingTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes1.get(i).processId == row){
+            text(processes1.get(i).waitingTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+        
     }
     
     for (int row = 1; row < numRows-1; row++) {           
@@ -652,8 +673,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageWaitngTime[1] += (float) processes2.get(row-1).waitingTime / numProcesses;
         
-        // Display cell content              
-        text(processes2.get(row-1).waitingTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes2.get(i).processId == row){
+        text(processes2.get(i).waitingTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+        
     }
     
     for (int row = 1; row < numRows-1; row++) {           
@@ -662,8 +689,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageWaitngTime[2] += (float) processes3.get(row-1).waitingTime / numProcesses;
         
-        // Display cell content              
-        text(processes3.get(row-1).waitingTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes3.get(i).processId == row){
+        text(processes3.get(i).waitingTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                    
     }
     
   /*  for (int row = 1; row < numRows-1; row++) {           
@@ -672,18 +705,30 @@ void drawTable() { //<>// //<>// //<>//
         
         averageWaitngTime[3] += (float) processes4.get(row-1).waitingTime / numProcesses;
         
-        // Display cell content              
-        text(processes4.get(row-1).waitingTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes4.get(i).processId == row){
+        text(processes4.get(i).waitingTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                   
     }
    */ 
     for (int row = 1; row < numRows-1; row++) {           
-        int y = row * cellHeight + initialY;
+        int y = row * cellHeight + initialY;        
+        x = 12 * cellWidth + initialX;
         
         averageWaitngTime[4] += (float) processes5.get(row-1).waitingTime / numProcesses;
-        
-        x = 12 * cellWidth + initialX;
-        // Display cell content              
-        text(processes5.get(row-1).waitingTime, x + cellWidth / 2, y + cellHeight / 2);            
+                
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes5.get(i).processId == row){
+        text(processes5.get(i).waitingTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                    
     }
     
     
@@ -694,8 +739,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageTurnaroundTime[0] += (float) processes1.get(row-1).turnaroundTime / numProcesses;
                 
-        // Display cell content              
-        text(processes1.get(row-1).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes1.get(i).processId == row){
+        text(processes1.get(i).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+          
     }
     
     for (int row = 1; row < numRows-1; row++) {           
@@ -704,8 +755,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageTurnaroundTime[1] += (float) processes2.get(row-1).turnaroundTime / numProcesses;
            
-        // Display cell content              
-        text(processes2.get(row-1).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes2.get(i).processId == row){
+        text(processes2.get(i).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                      
     }
     
     for (int row = 1; row < numRows-1; row++) {           
@@ -714,8 +771,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageTurnaroundTime[2] += (float) processes3.get(row-1).turnaroundTime / numProcesses;
            
-        // Display cell content              
-        text(processes3.get(row-1).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes3.get(i).processId == row){
+        text(processes3.get(i).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                 
     }
     
   /*  for (int row = 1; row < numRows-1; row++) {           
@@ -724,8 +787,14 @@ void drawTable() { //<>// //<>// //<>//
         
         averageTurnaroundTime[3] += (float) processes4.get(row-1).turnaroundTime / numProcesses;
            
-        // Display cell content              
-        text(processes4.get(row-1).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes4.get(i).processId == row){
+        text(processes4.get(i).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                
     }
    */ 
     for (int row = 1; row < numRows-1; row++) {           
@@ -734,9 +803,17 @@ void drawTable() { //<>// //<>// //<>//
         
         averageTurnaroundTime[4] += (float) processes5.get(row-1).turnaroundTime / numProcesses;
            
-        // Display cell content              
-        text(processes5.get(row-1).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2);            
+        // Display cell content   
+        for(int i = 0;i< numProcesses;i++)
+        {
+          if(processes5.get(i).processId == row){
+        text(processes5.get(i).turnaroundTime, x + cellWidth / 2, y + cellHeight / 2); 
+          }
+        }
+                     
     }
+    
+    
     
     //Display average times
     int itr1=0;

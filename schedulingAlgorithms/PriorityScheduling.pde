@@ -7,7 +7,7 @@ import java.util.Queue;
 class PriorityScheduling implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
-        int currentTime = 0;
+        int currentTime = startTime;
         
         
         //sorting according to arrival times

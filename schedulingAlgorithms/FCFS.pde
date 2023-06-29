@@ -21,7 +21,7 @@ class FCFS implements SchedulingAlgorithm {
             }
         }
         
-        int currentTime = 0;
+        int currentTime = startTime;
         for (Process process : processes) {
             // Calculate waiting time
             process.waitingTime = currentTime - process.arrivalTime;
