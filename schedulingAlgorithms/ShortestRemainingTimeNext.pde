@@ -7,7 +7,8 @@ import java.util.Queue;
 class ShortestRemainingTimeNext implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
-       ArrayList<Process> processControlBlock  = new ArrayList<>();     
+       ArrayList<Process> SRTN  = new ArrayList<>();  
+       ArrayList<Process> readyQueue = new ArrayList<>();       
        
       //sorting according to burst times
         for (int i = 0; i < processes.size(); i++)
@@ -32,55 +33,40 @@ class ShortestRemainingTimeNext implements SchedulingAlgorithm {
                 }
             }
         }
-       int currentTime = 0; 
-       while (!processes.isEmpty()) {
-            Process shortestProcess = null;
-            int shortestTime = Integer.MAX_VALUE;
 
-            // Find the process with the shortest remaining time
-            for (Process process : processes) {
-                if (process.arrivalTime <= currentTime && process.remainingTime < shortestTime) {
-                    shortestProcess = process;
-                    shortestTime = process.remainingTime;
-                }
-            }
-
-            if (shortestProcess != null) {
-                // Execute the shortest process for 1 time unit
-                System.out.println("Executing process " + shortestProcess.processId + " at time " + currentTime);
-                shortestProcess.remainingTime = shortestProcess.remainingTime - 1;
-
-                // Add the process to the process control block
-                processControlBlock.add(shortestProcess);
-
-                // Check if the process is completed
-                if (shortestProcess.remainingTime == 0) {
-                    processes.remove(shortestProcess);
-                }
-            } else {
-                // No process is available at the current time, increment the current time
-                currentTime++;
-            }
-        }
-
-        // Print the process control block
-        System.out.println("\nProcess Control Block:");
-        for (Process process : processControlBlock) {
-            System.out.println("Process " + process.processId);
-        }
-    
+        int time = startTime;
+        int currentProcess = -1;
        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
- 
+        while(time < TotalburstTime){
+            boolean added = false;
+            for(int i = 0; i < processes.size(); i++){
+                if(processes.get(i).arrivalTime <= time && processes.get(i).burstTime > 0) && !readyQueue.contains(processes.get(i)){
+                    readyQueue.add(processes.get(i));
+                    added = true;
+                }
+            }
+
+            if(added){
+                currentProcess++;
+                //Find the process with the shortest burst time
+                int min = readyQueue.get(0).burstTime;
+                int index = 0;
+                for(int i = 0; i < readyQueue.size(); i++){
+                    if((readyQueue.get(i).burstTime < min)&& (readyQueue.get(i).burstTime > 0)){
+                        min = readyQueue.get(i).burstTime;
+                        index = i;
+                    }
+                }
+
+                readyQueue.get(index).arrivalTime = time;
+                readyQueue.get(index).burstTime--;
+                SRTN.add(readyQueue.get(index));
+                
+            }
+
+            SRTN.get(currentProcess).burstTime = time - SRTN.get(currentProcess).arrivalTime;
+            time++;
+        }
     }
     
     void swap(ArrayList<Process> processes, int index1, int index2)

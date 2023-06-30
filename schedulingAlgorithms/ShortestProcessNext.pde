@@ -47,12 +47,12 @@ class ShortestProcessNext implements SchedulingAlgorithm {
           
           for(j=0;j<processes.size();j++){
              
-            if(tempary.arrivalTime==processes.get(j).arrivalTime)
+            if(tempary.arrivalTime==processes.get(j).arrivalTime && tempary.burstTime==processes.get(j).burstTime)
             {
-              swap(processes,j,z);                                    //Methana check karapn
-              z++;                                                    //Ekata wadi una gmn index out of bound yanwa 
-            }                                                         // https://www.guru99.com/priority-scheduling-program.html
-          }                                                          //Me link eke thiyn example ekata check krl blpn
+              swap(processes,j,z);                                    
+              z++;                                                    
+            }                                                         
+          }                                                          
           
           k=0;
 

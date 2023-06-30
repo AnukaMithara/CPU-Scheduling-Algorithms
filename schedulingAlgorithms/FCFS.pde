@@ -43,4 +43,4 @@ class FCFS implements SchedulingAlgorithm {
         processes.set(index1, processes.get(index2));
         processes.set(index2, temp);
     }          
-} //<>// //<>//
+} 
