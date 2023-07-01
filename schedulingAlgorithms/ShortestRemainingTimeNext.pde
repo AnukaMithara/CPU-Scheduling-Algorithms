@@ -1,28 +1,16 @@
-import javax.swing.JOptionPane;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.List;
 
-// Shortest Remaining Time Next Algorithm
-class ShortestRemainingTimeNext implements SchedulingAlgorithm {
+
+class ShortestRemaningTimeNext implements SchedulingAlgorithm {
+   private List<Process> processn = new ArrayList<>();
+   private List<Integer>bt=new ArrayList<>();
+ 
     @Override
     public void execute(ArrayList<Process> processes) {
-        ArrayList<Process> SRTN  = new ArrayList<>();  
-        ArrayList<Process> readyQueue = new ArrayList<>();       
-        
-        //sorting according to burst times
-        for (int i = 0; i < processes.size(); i++)
-        {
-            for (int  j = 0;  j < processes.size() - 1; j++)
-            {
-                if (processes.get(j).burstTime > processes.get(j + 1).burstTime)
-                {
-                    swap(processes, j,j + 1);                
-                }
-            }
-        }
-        
-        //sorting according to arrival times
+      
+         //sorting according to arrival times
         for (int i = 0; i < processes.size(); i++)
         {
             for (int  j = 0;  j < processes.size() - 1; j++)
@@ -34,46 +22,86 @@ class ShortestRemainingTimeNext implements SchedulingAlgorithm {
             }
         }
         
-        /* int time = startTime;
-        int currentProcess = -1;
-        
-        while(time < TotalburstTime){
-        boolean added = false;
-        for(int i = 0; i < processes.size(); i++){
-        if(processes.get(i).arrivalTime <= time && processes.get(i).burstTime > 0) && !readyQueue.contains(processes.get(i)){
-        readyQueue.add(processes.get(i));
-        added = true;
+       
+        int currentTime = processes.get(0).arrivalTime;
+        int completedProcesses = 0;
+
+        while (completedProcesses < processes.size()) {
+            Process shortestProcess = null;
+            int shortestTime = Integer.MAX_VALUE;
+
+            for (Process process : processes) {
+                if (process.arrivalTime <= currentTime && process.burstTime < shortestTime && process.burstTime > 0) {
+                    shortestProcess = process;
+                    shortestTime = process.burstTime;
+                }
+            }
+
+            if (shortestProcess == null) {
+                currentTime++;
+                processn.add(null); 
+                continue;
+            }
+
+            processn.add(shortestProcess);
+            shortestProcess.endTime=currentTime+1;
+            bt.add(1);
+            shortestProcess.burstTime--;
+            currentTime++;
+
+            if (shortestProcess.burstTime == 0) {
+                completedProcesses++;
+            }
         }
-        }
-        
-        if(added){
-        currentProcess++;
-        //Find the process with the shortest burst time
-        int min = readyQueue.get(0).burstTime;
-        int index = 0;
-        for(int i = 0; i < readyQueue.size(); i++){
-        if((readyQueue.get(i).burstTime < min)&& (readyQueue.get(i).burstTime > 0)){
-        min = readyQueue.get(i).burstTime;
-        index = i;
-        }
-        }
-        
-        readyQueue.get(index).arrivalTime = time;
-        readyQueue.get(index).burstTime--;
-        SRTN.add(readyQueue.get(index));
-        
-        }
-        
-        SRTN.get(currentProcess).burstTime = time - SRTN.get(currentProcess).arrivalTime;
-        time++;
-    }
-        */
-    }
+         for (int h = 0; h < processes.size(); h++) {
+    Process process = processes.get(h);
+    int turnaroundTime = process.endTime - process.arrivalTime;
+    process.turnaroundTime=(turnaroundTime);
+    process.waitingTime=turnaroundTime-process.burstTimeC;
+}
+ Process curP=processn.get(0);
+ List<Process>mergedJob=new ArrayList<>();
+ List<Integer>mT=new ArrayList<>();
+ int count=0;
+ boolean h=false;
+for(int l=0;l<processn.size();l++){
+  if(processn.get(l).processId==curP.processId){
+    count++;
+    h=true;
+  }
+  else{
+    mergedJob.add(curP);
+    mT.add(count);
+    h=false;
+    count=1;
+    curP=processn.get(l);
+  }
+  
+
+}
+if(curP!=null&&h){
+mergedJob.add(curP);
+mT.add(count);
+}
     
+processn=mergedJob;
+bt=mT;
+ 
+        for(int i=0;i<mergedJob.size();i++){
+        print("|"+bt.get(i)+"|");
+        }
+        
+    }
+    public List<Process> getProcess(){
+      return processn;
+    }
+    public List<Integer> getBt(){
+      return bt;
+    }
     void swap(ArrayList<Process> processes, int index1, int index2)
     {
         Process temp = processes.get(index1);
         processes.set(index1, processes.get(index2));
         processes.set(index2, temp);
-    }          
+    }   
 }

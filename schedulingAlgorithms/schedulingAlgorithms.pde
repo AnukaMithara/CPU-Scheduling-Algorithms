@@ -1,4 +1,4 @@
-import javax.swing.*;  
+import javax.swing.*;   //<>//
 import java.awt.*;
 import java.util.*;
 
@@ -25,23 +25,21 @@ ArrayList<Process> processes3;
 ArrayList<Process> processes4;
 ArrayList<Process> processes5;
 ArrayList<Integer> RRbt;
-ArrayList<Integer> RRTT;
-ArrayList<Integer> RRWT;
+
 ArrayList<Process> processRR;
-
-ArrayList<Process> SRTN = new ArrayList<>(); 
-
+List<Process>processSR;
+List<Integer>SRbt;
 
 // Scheduling algorithm instance
 SchedulingAlgorithm algorithm1;
 RoundRobin algorithm2;
 SchedulingAlgorithm algorithm3;
-SchedulingAlgorithm algorithm4;
+ShortestRemaningTimeNext algorithm4;
 SchedulingAlgorithm algorithm5;    
 
 void setup() {
     size(1920, 1080);
-    surface.setResizable(true);
+    //surface.setResizable(true);
     sketch = this; // Assign the reference to the current sketch
     
     //Initialize process array
@@ -51,9 +49,10 @@ void setup() {
     processes4 = new ArrayList<>();
     processes5 = new ArrayList<>();  
     RRbt = new ArrayList<>();
-    RRWT = new ArrayList<>();
-    RRTT = new ArrayList<>();
     processRR = new ArrayList<>();
+    processSR=new ArrayList <>();
+    SRbt=new ArrayList<>();
+    
     
     getUserInput();
     
@@ -200,7 +199,7 @@ void getUserInput() {
         algorithm1 = new FCFS();
         algorithm2 = new RoundRobin(timeQuantum);
         algorithm3 = new ShortestProcessNext();
-        algorithm4 = new ShortestRemainingTimeNext();
+        algorithm4 = new ShortestRemaningTimeNext();
         algorithm5 = new PriorityScheduling();
         
         // Calculate waiting time and turnaround time for all algorithms
@@ -211,6 +210,8 @@ void getUserInput() {
         
         algorithm3.execute(processes3);
         algorithm4.execute(processes4);
+        SRbt=algorithm4.getBt();
+        processSR=algorithm4.getProcess();
         algorithm5.execute(processes5);     
         
         ganttWidthFactor = 1600 / TotalburstTime;
@@ -230,22 +231,22 @@ void draw() {
     
     drawCharts();
     if (totalCurrentBurstTime > TotalburstTime) {
-        findBest();
+        findBestWaitingTime();
     }
     
     totalCurrentBurstTime++;      
-    delay(500);
+    delay(1000);
 }
 
 void drawButton() {
+    //Restart button
     fill(241, 243, 244);
-    rect(1720, 120, 150, 100);
-    
+    rect(1710, 120, 150, 100);    
     //Draw the button text
     fill(0);
     textSize(20);
     textAlign(CENTER, CENTER);
-    text("Restart", 1720 + 150 / 2, 120 + 100 / 2);  
+    text("Restart", 1710 + 150 / 2, 120 + 100 / 2);      
 }
 
 void mousePressed() {
@@ -256,41 +257,32 @@ void mousePressed() {
     }
 }
 
-void restartApplication() {
-    //Use reflection to get the name of the current sketch class
-    String sketchClassName = sketch.getClass().getName();
+void findBestWaitingTime() {    
+    float minWaiting = averageWaitngTime[0];
     
-    //Createa new instance of the current sketch class
-    try {
-        Class<?> sketchClass = Class.forName(sketchClassName);
-        PApplet newSketch = (PApplet) sketchClass.newInstance();
-        PApplet.runSketch(new String[]{sketchClassName} , newSketch);
-        surface.setVisible(false); // Hide the current sketch window
-    } catch(ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-        println("An error occurred while restarting the application.");
-        e.printStackTrace();
-    }
-}
-
-void findBest() {
-    
-    int bestProcessID = 0;
     for (int i = 0; i < 5; i++)
         {
-        if (averageWaitngTime[i] < averageWaitngTime[bestProcessID])
+        if (averageWaitngTime[i] < minWaiting)
             {
-            bestProcessID = i;
+            minWaiting = averageWaitngTime[i];
         }
     }
     
-    //Draw rectangle
+    //Draw rectangle(s)
     int xx = 10;
     int yy = 520;
     int gap = 100;
     fill(255, 255, 0, 20);
-    rect(xx, yy + gap * bestProcessID,TotalburstTime * ganttWidthFactor + 280,95);
     
+    for (int i = 0; i < 5; i++)
+        {
+        if (averageWaitngTime[i] == minWaiting)
+            {             
+    rect(xx, yy + gap * i,TotalburstTime * ganttWidthFactor + 280,95);
+        }
+    }
 }
+
 void drawlabels() {
     int init = 100;
     textSize(20);
@@ -495,7 +487,7 @@ void drawCharts() {
     }
     
     
-    if (processNumber4 < SRTN.size()) {
+   if (processNumber4 < processSR.size()) {
         
         for (int i = 0;i < processNumber4 + 1;i++) {
             
@@ -503,54 +495,55 @@ void drawCharts() {
                 // Draw process rectangle
                 fill(247, 111, 115);
                 textSize(20);
-                rect(x4, y4,SRTN.get(i).burstTime * ganttWidthFactor, rectHeight);
+                rect(x4, y4,SRbt.get(i) * ganttWidthFactor, rectHeight);
                 
                 // Draw process label
                 fill(0);
-                text("P" + SRTN.get(i).processId, x4 + SRTN.get(i).burstTime * ganttWidthFactor / 2, y4 + rectHeight / 2);
+                text("P" + processSR.get(i).processId, x4 + SRbt.get(i) * ganttWidthFactor / 2, y4 + rectHeight / 2);
                 
                 textSize(15);
                 text(algo4TotalTime, x4, y4 + rectHeight + 5);
                 
                 // Update x position for next process
-                x4 += SRTN.get(i).burstTime * ganttWidthFactor; 
-                algo4TotalTime += SRTN.get(i).burstTime;             
+                x4 += SRbt.get(i) * ganttWidthFactor; 
+                algo4TotalTime += SRbt.get(i);             
             }
         }   
         
         fill(0, 255,0);              
-        rect(x4 - SRTN.get(processNumber4).burstTime * ganttWidthFactor, y4, SRTN.get(processNumber4).burstTime * ganttWidthFactor, rectHeight);
+        rect(x4 - SRbt.get(processNumber4) * ganttWidthFactor, y4, SRbt.get(processNumber4) * ganttWidthFactor, rectHeight);
         // Draw process label
         fill(0);
-        text("P" + SRTN.get(processNumber4).processId, x4 - SRTN.get(processNumber4).burstTime * ganttWidthFactor / 2, y4 + rectHeight / 2);
+        text("P" + processSR.get(processNumber4).processId, x4 - SRbt.get(processNumber4) * ganttWidthFactor / 2, y4 + rectHeight / 2);
         
         if (algo4TotalTime <  totalCurrentBurstTime) {
             processNumber4++;
         }
     } else{
-        for (int i = 0;i < SRTN.size();i++) {
+        for (int i = 0;i < processSR.size();i++) {
             
             if (algo4TotalTime < TotalburstTime) {
                 // Draw process rectangle
                 fill(247, 111, 115);
                 textSize(20);
-                rect(x4, y4,SRTN.get(i).burstTime * ganttWidthFactor, rectHeight);
+                rect(x4, y4,SRbt.get(i) * ganttWidthFactor, rectHeight);
                 
                 // Draw process label
                 fill(0);
-                text("P" + SRTN.get(i).processId, x4 + SRTN.get(i).burstTime * ganttWidthFactor / 2, y4 + rectHeight / 2);
+                text("P" + processSR.get(i).processId, x4 + SRbt.get(i) * ganttWidthFactor / 2, y4 + rectHeight / 2);
                 
                 textSize(15);
                 text(algo4TotalTime, x4, y4 + rectHeight + 5);
                 
                 // Update x position for next process
-                x4 += SRTN.get(i).burstTime * ganttWidthFactor; 
-                algo4TotalTime += SRTN.get(i).burstTime;   
+                x4 += SRbt.get(i) * ganttWidthFactor; 
+                algo4TotalTime += SRbt.get(i);   
                 
                 text(algo4TotalTime, x4, y4 + rectHeight + 5);
             }
         }        
     }
+
     
     if (processNumber5 < processes5.size()) {
         
@@ -611,7 +604,7 @@ void drawCharts() {
 }
 
 
-void drawTable() { //<>// //<>//
+void drawTable() { 
     //Set table dimensions
     int numRows = numProcesses + 1 + 1;                
     int numCols = 4 + 10;
@@ -912,7 +905,21 @@ void drawTable() { //<>// //<>//
     
 }
 
-
+void restartApplication() {
+    //Use reflection to get the name of the current sketch class
+    String sketchClassName = sketch.getClass().getName();
+    
+    //Createa new instance of the current sketch class
+    try {
+        Class<?> sketchClass = Class.forName(sketchClassName);
+        PApplet newSketch = (PApplet) sketchClass.newInstance();
+        PApplet.runSketch(new String[]{sketchClassName} , newSketch);
+        surface.setVisible(false); // Hide the current sketch window
+    } catch(ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+        println("An error occurred while restarting the application.");
+        e.printStackTrace();
+    }
+}
 
 public static void main(String[] args) {
     PApplet.runSketch(new String[] {"Scheduling Algorithms - Group 01" } , new schedulingAlgorithms());
