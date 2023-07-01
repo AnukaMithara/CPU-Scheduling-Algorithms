@@ -2,6 +2,7 @@
 class Process {
     int arrivalTime;
     int burstTime;
+    int burstTimeC;
     int waitingTime;
     int turnaroundTime;
     int priority;
@@ -16,6 +17,7 @@ class Process {
         this.burstTime = burstTime;
         this.priority = priority;
         this.remainingTime = burstTime;
+        this.burstTimeC=burstTime;
     }
 }
 

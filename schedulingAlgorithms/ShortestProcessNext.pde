@@ -8,7 +8,7 @@ class ShortestProcessNext implements SchedulingAlgorithm {
     @Override
     public void execute(ArrayList<Process> processes) {
         int currentTime = startTime;
-        int j=0, k =0,z=0;
+        int j = 0, k = 0,z = 0;
         Process[] newarray = new Process[processes.size()];
         
         //sorting according to arrival times
@@ -26,39 +26,39 @@ class ShortestProcessNext implements SchedulingAlgorithm {
         int i = startTime;
         
         
-        while(i< TotalburstTime){
-          
-          for(j=z;j<processes.size();j++){
-            if (processes.get(j).arrivalTime <= i){
-              newarray[k] = processes.get(j);
-              k++;
-            }
-          }
-          
-          Process tempary = newarray[0];
-          for(j=0;j<k-1;j++)
-          {
-            if(newarray[j+1].burstTime< tempary.burstTime)
-            {
-              tempary = newarray[j+1];
-            }
-              
-          }
-          
-          for(j=0;j<processes.size();j++){
-             
-            if(tempary.arrivalTime==processes.get(j).arrivalTime && tempary.burstTime==processes.get(j).burstTime)
-            {
-              swap(processes,j,z);                                    
-              z++;                                                    
-            }                                                         
-          }                                                          
-          
-          k=0;
-
-          i = i +  tempary.burstTime;
+        while(i< TotalburstTime) {
+            
+            for (j = z;j < processes.size();j++) {
+                if (processes.get(j).arrivalTime <= i) {
+                    newarray[k] = processes.get(j);
+                    k++;
+                }
         }
-
+            
+            Process tempary = newarray[0];
+            for (j = 0;j < k - 1;j++)
+            {
+                if (newarray[j + 1].burstTime < tempary.burstTime)
+                {
+                    tempary = newarray[j + 1];
+                }
+                
+        }
+            
+            for (j = 0;j < processes.size();j++) {
+                
+                if (tempary.arrivalTime ==  processes.get(j).arrivalTime && tempary.burstTime ==  processes.get(j).burstTime)
+                {
+                    swap(processes,j,z);                                    
+                    z++;  
+                }   
+        }                                                          
+            
+            k = 0;
+            
+            i = i +  tempary.burstTime;
+        }
+        
         for (Process process : processes) {
             // Calculate waiting time
             process.waitingTime = currentTime - process.arrivalTime;
