@@ -1,4 +1,4 @@
-# Scheduling-Algorithms
+# CPU-Scheduling-Algorithms
 
 This is an implementation of scheduling algorithms using Processing. The assignment includes the following scheduling algorithms:
 
