@@ -60,7 +60,7 @@ void setup() {
     //Title
     textSize(50);
     fill(25, 42, 83);
-    text("Comparision of Scheduling Algorithms", 600, 50);
+    text("Comparision of CPU Scheduling Algorithms", 550, 50);
     drawlabels();
     drawTable();
     
@@ -235,7 +235,7 @@ void draw() {
     }
     
     totalCurrentBurstTime++;      
-    delay(1000);
+    delay(500);
 }
 
 void drawButton() {
