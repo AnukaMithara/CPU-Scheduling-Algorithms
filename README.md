@@ -10,9 +10,10 @@ This is an implementation of scheduling algorithms using Processing. The assignm
 
     
 ## Installation guide
-    1. Install Processing: Processing is required to run the implementation of scheduling algorithms. You can download and install Processing from the official website: (https://processing.org/download/)
-    2. Open the Project: After installing Processing, open the cloned repository as a project in the Processing IDE.
-    3. Run the Algorithms: Once the project is opened, you should be able to run each scheduling algorithm using the Processing IDE.
+1. Install Processing: Processing is required to run the implementation of scheduling algorithms.
+     You can download and install Processing from the official website: 'https://processing.org/download/'
+3. Open the Project: After installing Processing, open the cloned repository as a project in the Processing IDE.
+4. Run the Algorithms: Once the project is opened, you should be able to run each scheduling algorithm using the Processing IDE.
 
 ## Contributors
 
